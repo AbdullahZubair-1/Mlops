@@ -1,0 +1,29 @@
+accuracy: 0.9403131115459883
+best_model: RandomForestClassifier
+classification_report:
+  '0':
+    f1-score: 0.9691763516927742
+    precision: 0.9411187438665358
+    recall: 0.9989583333333333
+    support: 960.0
+  '1':
+    f1-score: 0.06153846153846154
+    precision: 0.6666666666666666
+    recall: 0.03225806451612903
+    support: 62.0
+  accuracy: 0.9403131115459883
+  macro avg:
+    f1-score: 0.5153574066156179
+    precision: 0.8038927052666012
+    recall: 0.5156081989247312
+    support: 1022.0
+  weighted avg:
+    f1-score: 0.9141141704896749
+    precision: 0.9244690092418862
+    recall: 0.9403131115459883
+    support: 1022.0
+confusion_matrix:
+- - 959
+  - 1
+- - 60
+  - 2
