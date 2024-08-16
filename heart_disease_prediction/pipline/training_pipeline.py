@@ -1,54 +1,53 @@
-# training_pipeline.py
+# heart_disease_prediction/pipeline/training_pipeline.py
 
-import subprocess
 from heart_disease_prediction.entity.config_entity import DataIngestionConfig
 from heart_disease_prediction.components.data_ingestion import DataIngestion
 from heart_disease_prediction.components.data_transformation import DataTransformation
+import subprocess
 
+class ModelTrainingPipeline:
+    def __init__(self, schema_filepath: str):
+        self.schema_filepath = schema_filepath
 
-class TrainingPipeline:
-    def __init__(self, schema_path: str):
-        self.schema_path = schema_path
+    def execute_data_ingestion(self):
+        # Perform Data Ingestion
+        ingestion_process = DataIngestion(DataIngestionConfig())
+        ingestion_output = ingestion_process.initiate_data_ingestion()
+        print("Data ingestion process completed.")
+        return ingestion_output
 
-    def run_data_ingestion(self):
-        # Data Ingestion
-        data_ingestion = DataIngestion(DataIngestionConfig)
-        diArtifacts = data_ingestion.initiate_data_ingestion()
-        print("Data ingestion completed.")
-        return diArtifacts
-
-    def run_data_validation(self, test_csv_path: str):
-        # Data Validation
+    def execute_data_validation(self, validation_csv_path: str):
+        # Perform Data Validation
         subprocess.run(
             [
                 "python",
                 "heart_disease_prediction/components/data_validation.py",
-                test_csv_path,
-                self.schema_path,
+                validation_csv_path,
+                self.schema_filepath,
             ]
         )
-        print("Data validation completed.")
+        print("Data validation process completed.")
 
-    def run_data_transformation(self, diArtifacts):
-        # Data Transformation
-        data_transformation = DataTransformation(diArtifacts, self.schema_path)
-        transformation_artifacts = data_transformation.initiate_data_transformation()
-        print("Data transformation completed. Artifacts:", transformation_artifacts)
-        return transformation_artifacts
+    def execute_data_transformation(self, ingestion_output):
+        # Perform Data Transformation
+        transformation_process = DataTransformation(ingestion_output, self.schema_filepath)
+        transformation_output = transformation_process.initiate_data_transformation()
+        print("Data transformation process completed. Artifacts generated:", transformation_output)
+        return transformation_output
 
-    def train(self):
-        # Run data ingestion
-        diArtifacts = self.run_data_ingestion()
+    def start_training(self):
+        # Execute data ingestion
+        ingestion_output = self.execute_data_ingestion()
 
-        # Run data validation
-        self.run_data_validation(diArtifacts.test_file_path)
+        # Execute data validation
+        self.execute_data_validation(ingestion_output.test_file_path)
 
-        # Run data transformation
-        transformation_artifacts = self.run_data_transformation(diArtifacts)
+        # Execute data transformation
+        transformation_output = self.execute_data_transformation(ingestion_output)
 
-        # Return paths for later use
+        # Return model and preprocessing file paths for future use
         return {
-            "model_path": "./artifact/best_model.pkl",
-            "preprocessing_path": "./artifact/preprocessing.pkl",
-            "test_data_path": diArtifacts.test_file_path,
+            "model_filepath": "./artifact/best_model.pkl",
+            "preprocessing_filepath": "./artifact/preprocessing.pkl",
+            "test_data_filepath": ingestion_output.test_file_path,
         }

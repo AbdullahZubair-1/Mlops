@@ -1,31 +1,29 @@
-# prediction_pipeline.py
-
 import pandas as pd
 from heart_disease_prediction.components import estimator
 
 
-class PredictionPipeline:
-    def __init__(self, model_path, preprocessing_path):
-        self.model_path = model_path
-        self.preprocessing_path = preprocessing_path
+class StrokePredictionPipeline:
+    def __init__(self, model_file, preprocessing_file):
+        self.model_file = model_file
+        self.preprocessing_file = preprocessing_file
 
-    def predict(self, user_input: dict) -> str:
-        # Convert user input into DataFrame
-        user_df = pd.DataFrame([user_input])
+    def make_prediction(self, input_data: dict) -> str:
+        # Convert input data into a DataFrame
+        input_df = pd.DataFrame([input_data])
 
-        # Convert appropriate columns to numeric
-        numeric_columns = [
+        # Ensure relevant columns are numeric
+        numeric_fields = [
             "age",
             "hypertension",
             "heart_disease",
             "avg_glucose_level",
             "bmi",
         ]
-        for column in numeric_columns:
-            user_df[column] = pd.to_numeric(user_df[column])
+        for field in numeric_fields:
+            input_df[field] = pd.to_numeric(input_df[field])
 
-        # Predict using the estimator
-        prediction = estimator.predict(
-            self.model_path, self.preprocessing_path, user_df
+        # Generate prediction using the estimator
+        prediction_result = predict(
+            self.model_file, self.preprocessing_file, input_df
         )
-        return "Stroke" if prediction[0] == 1 else "No Stroke"
+        return "Stroke" if prediction_result[0] == 1 else "No Stroke"
